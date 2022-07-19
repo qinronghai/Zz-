@@ -21,80 +21,10 @@ var dataList =
 var dataList_copy = ["请选择练习的试卷", 7, 6, 5, 4, 3, 2, 1, "轮询练习", "最终考试"];
 // 已答卷次数
 var answeredNum = 0;
-var cookie =
-  "PHPSESSID=dca774345dfb2b48ec5e2dd7c03d0f9c; __51cke__=; __tins__21354221=%7B%22sid%22%3A%201658126532121%2C%20%22vd%22%3A%205%2C%20%22expires%22%3A%201658128450843%7D; __51laig__=11";
 
-// 配置headers
-var headers = {
-  "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-  "Accept-Encoding": "gzip, deflate",
-  Accept: "application/json, text/javascript, */*; q=0.01",
-  "Proxy-Connection": "keep-alive",
-  "X-Requested-With": "XMLHttpRequest",
-  Host: "nzks.2009xc.com",
-  "User-Agent":
-    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x6307001d)",
-  "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-  Cookie: cookie,
-};
-var headers1 = {
-  Host: "nzks.2009xc.com",
-  Connection: "keep-alive",
-  Accept: "application/json, text/javascript, */*; q=0.01",
-  "User-Agent":
-    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x6307001d)",
-  "X-Requested-With": "XMLHttpRequest",
-  Cookie: cookie,
-};
-let headers2 = {
-  Host: "nzks.2009xc.com",
-  Connection: "keep-alive",
-  Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-  "User-Agent":
-    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x63070517)",
-  "X-Requested-With": "XMLHttpRequest",
-  Cookie:
-    "PHPSESSID=cd70b21459a02bf2524bbb8e741eb7b1; __51cke__=; __tins__21354221=%7B%22sid%22%3A%201658149250241%2C%20%22vd%22%3A%202%2C%20%22expires%22%3A%201658151054025%7D; __51laig__=2",
-  "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-  "Accept-Encoding": "gzip, deflate",
-  "Upgrade-Insecure-Requests": 1,
-};
+// 在config.js文件重已经配置
+var headers = require("config.js");
 
-function getUserInfo() {
-  let url = "http://nzks.2009xc.com/mobile/system.member.Index?i=1";
-  var user = http.get(url, {
-    headers: {
-      Host: "nzks.2009xc.com",
-      Connection: "keep-alive",
-      Accept:
-        "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-      "User-Agent":
-        " Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x6307001d)",
-      // "X-Requested-With": "XMLHttpRequest",
-      "Upgrade-Insecure-Requests": 1,
-      Cookie:
-        "PHPSESSID=cd70b21459a02bf2524bbb8e741eb7b1; __51cke__=; __tins__21354221=%7B%22sid%22%3A%201658192877590%2C%20%22vd%22%3A%203%2C%20%22expires%22%3A%201658194681098%7D; __51laig__=8",
-    },
-  });
-  let user_info = user.body.string();
-  // log(user_info);
-  const regex = /((<span class=\"info-value\">))([0-9]{0,})/gm;
-  log(regex);
-  let mm = user_info.match(regex)[1];
-  log(mm);
-  let reg = /([0-9]{0,})/gm;
-  let test = mm.match(reg);
-  log(test);
-  test.forEach((item) => {
-    if (item != "") {
-      log(item);
-      currentIntegral = item;
-    }
-  });
-
-  log("积分为：" + currentIntegral);
-  ui.integral.setText("当前积分：" + currentIntegral);
-}
 // UI布局
 ui.layout(
   <vertical h="auto">
@@ -104,7 +34,7 @@ ui.layout(
     <viewpager margin="30">
       <vertical id="parent">
         <vertical>
-          <text text="姓名：{{name}}" textSize="14sp" h="40dp" textColor="blue" />
+          <text id="name" text="姓名：{{name}}" textSize="14sp" h="40dp" textColor="blue" />
           <text id="integral" text="当前积分：{{currentIntegral}}" textSize="14sp" h="40dp" textColor="red" />
           <text text="Cookie" textColor="black" textStyle="bold" h="40dp" textSize="18sp" />
           <input id="Cookie" />
@@ -127,24 +57,31 @@ ui.layout(
             <button w="120" id="start_btn" marginTop="18dp" bg="#27c671">
               开始答题
             </button>
-            <button w="120" id="start_btn" marginTop="18dp" bg="#f38b00">
+            <button w="120" marginTop="18dp" bg="#f38b00">
               开始考试
             </button>
           </vertical>
           <vertical>
-            <button w="120" id="start_btn" marginTop="18dp" bg="#6574eb">
+            <button w="120" marginTop="18dp" bg="#6574eb">
               爬取题目
             </button>
-            <button w="120" id="start_btn" marginTop="18dp" bg="#e83434">
+            <button id="stop" w="120" marginTop="18dp" bg="#e83434">
               停止
             </button>
           </vertical>
-          <button w="*" h="*" id="start_btn" marginTop="18dp" bg="#00acf6">
+          <button w="*" h="*" marginTop="18dp" bg="#00acf6">
             查询考试成绩
           </button>
         </horizontal>
 
-        <text text="已答卷次数：{{ answeredNum }}" gravity="center_vertical" textSize="14sp" h="40dp" textColor="black"></text>
+        <text
+          id="answeredNum"
+          text="已答卷次数：{{ answeredNum }}"
+          gravity="center_vertical"
+          textSize="14sp"
+          h="40dp"
+          textColor="black"
+        ></text>
         <vertical h="auto">
           <text text="日志" gravity="center_vertical" textStyle="bold" textSize="16sp" textColor="black" />
           <com.stardust.autojs.core.console.ConsoleView marginTop="5" id="console" h="auto" />
@@ -154,58 +91,119 @@ ui.layout(
   </vertical>
 );
 
-ui.console.setConsole(runtime.console);
-// 设置控制台字体颜色
-let c = new android.util.SparseArray();
-let Log = android.util.Log;
-c.put(Log.DEBUG, new java.lang.Integer(colors.parseColor("#363537")));
-ui.console.setColors(c);
+main();
 
-var isFirst = true;
-var myAdapterListener = new android.widget.AdapterView.OnItemSelectedListener({
-  onItemSelected: function (parent, view, position, id) {
-    if (isFirst) {
-      isFirst = false;
-    } else {
-      log("选择的试卷id是" + dataList_copy[id]);
-      // 设置试卷id
-      exercise_id = dataList_copy[id];
-      // log(exercise_id);
-    }
-  },
-});
-// 监听事件
-ui.spinner.setOnItemSelectedListener(myAdapterListener);
+// 主函数
+function main() {
+  // 两个线程
+  var doExerciseThread;
+  var getUserInfoThread;
 
-threads.start(function () {
-  //在新线程执行的代码
-  // do_exercise(sleepTime, loopNum, exercise_id, cookie);
-  // toast("执行任务完成！");
-  getUserInfo();
-  // alert("执行任务完成！");
-});
-
-// 按钮点击事件
-ui.start_btn.on("click", () => {
-  // 设置答题延时
-  log("答题延时是" + ui.delay.getText());
-  sleepTime = ui.delay.getText();
-  // 设置答题次数
-  log("执行次数是" + ui.loop.getText());
-  loopNum = ui.loop.getText();
-  // 设置cookie
-  cookie = ui.Cookie.getText();
-  headers.cookie = cookie;
-  headers1.cookie = cookie;
-  log("该用户的cookie是" + cookie + "\n");
-
-  threads.start(function () {
+  getUserInfoThread = threads.start(function () {
     //在新线程执行的代码
-    do_exercise(sleepTime, loopNum, exercise_id, cookie);
-    // toast("执行任务完成！");
-    alert("执行任务完成！");
+    getUserInfo();
   });
-});
+
+  // 设置控制台
+  ui.console.setConsole(runtime.console);
+  // 设置控制台字体颜色
+  let c = new android.util.SparseArray();
+  let Log = android.util.Log;
+  c.put(Log.DEBUG, new java.lang.Integer(colors.parseColor("#363537")));
+  ui.console.setColors(c);
+
+  // 监听下拉列表
+  var isFirst = true;
+  var myAdapterListener = new android.widget.AdapterView.OnItemSelectedListener({
+    onItemSelected: function (parent, view, position, id) {
+      if (isFirst) {
+        isFirst = false;
+      } else {
+        log("选择的试卷id是" + dataList_copy[id]);
+        // 设置试卷id
+        exercise_id = dataList_copy[id];
+      }
+    },
+  });
+  // 监听事件
+  ui.spinner.setOnItemSelectedListener(myAdapterListener);
+
+  // 开始答题按钮
+  ui.start_btn.on("click", () => {
+    // 设置答题延时
+    log("答题延时是" + ui.delay.getText());
+    sleepTime = ui.delay.getText();
+    // 设置答题次数
+    log("执行次数是" + ui.loop.getText());
+    loopNum = ui.loop.getText();
+    // 设置cookie
+    cookie = ui.Cookie.getText();
+    headers.A.cookie = cookie;
+    headers.B.cookie = cookie;
+    log("该用户的cookie是" + cookie + "\n");
+
+    doExerciseThread = threads.start(function () {
+      //在新线程执行的代码
+      do_exercise(sleepTime, loopNum, exercise_id, cookie);
+      // toast("执行任务完成！");
+      alert("执行任务完成！");
+    });
+  });
+
+  // 停止答题按钮
+  ui.stop.on("click", () => {
+    doExerciseThread.interrupt();
+    log("已停止答题...");
+  });
+}
+
+// 获取用户信息
+function getUserInfo() {
+  let url = "http://nzks.2009xc.com/mobile/system.member.Index?i=1";
+  var getHtml = http.get(url, {
+    headers: {
+      Host: "nzks.2009xc.com",
+      Connection: "keep-alive",
+      Accept:
+        "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+      "User-Agent":
+        " Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x6307001d)",
+      // "X-Requested-With": "XMLHttpRequest",
+      "Upgrade-Insecure-Requests": 1,
+      Cookie:
+        "PHPSESSID=cd70b21459a02bf2524bbb8e741eb7b1; __51cke__=; __tins__21354221=%7B%22sid%22%3A%201658202175397%2C%20%22vd%22%3A%201%2C%20%22expires%22%3A%201658203975397%7D; __51laig__=10",
+    },
+  });
+  // 取得html内容
+  let htmlString = getHtml.body.string();
+  // 中转正则
+  const REGEX_TRANSIT = /((<span class=\"info-value\">))([0-9]{0,})/gm;
+  let transitVar = htmlString.match(REGEX_TRANSIT)[1];
+
+  // 取积分-数字类型
+  const REGEX_CURPOINTS = /([0-9]{0,})/gm;
+  let curIntegralCharArr = transitVar.match(REGEX_CURPOINTS);
+
+  // 中转正则
+  const REGEX_NAME_TRANSIT = /((<span class=\"info-type\">)\D*)/gm;
+  transitVar = htmlString.match(REGEX_NAME_TRANSIT)[0];
+
+  // 取姓名-中文类型
+  const REGEX_NAME = /[\u4e00-\u9fa5·]{3}/;
+  let name = transitVar.match(REGEX_NAME)[0];
+
+  curIntegralCharArr.forEach((item) => {
+    if (item != "") {
+      currentIntegral = item;
+    }
+  });
+
+  log("用户的名字为：" + name);
+  log("当前积分为：" + currentIntegral);
+
+  ui.integral.setText("当前积分：" + currentIntegral);
+  ui.name.setText("姓名：" + name);
+}
 
 // 做试卷函数
 function do_exercise(sleepTime, loopNum, exercise_id, cookie) {
@@ -217,7 +215,7 @@ function do_exercise(sleepTime, loopNum, exercise_id, cookie) {
     // 1. 获取第一个token http://nzks.2009xc.com/token
     let firstUrl = "http://nzks.2009xc.com/token";
     var first = http.get(firstUrl, {
-      headers: headers,
+      headers: headers.A,
     });
     let firstToken = first.body.json().data;
     if (first.statusCode == 200) {
@@ -229,7 +227,7 @@ function do_exercise(sleepTime, loopNum, exercise_id, cookie) {
     let secondUrl = "http://nzks.2009xc.com/mobile/qbank.exercise.execution/entry?i=1&id=" + exercise_id;
     let secondPost = http.request(secondUrl, {
       method: "POST",
-      headers: headers,
+      headers: headers.A,
       contentType: "application/x-www-form-urlencoded; charset=UTF-8",
       body: "__token__=" + firstToken,
     });
@@ -249,7 +247,7 @@ function do_exercise(sleepTime, loopNum, exercise_id, cookie) {
     // 3.获取试卷题目
     let threeUrl = "http://nzks.2009xc.com/mobile/qbank.exercise.execution/get?i=1&paper_id=" + paperId;
     var threeGet = http.get(threeUrl, {
-      headers: headers1,
+      headers: headers.B,
     });
     var questionsList = threeGet.body.json().data.questions;
 
@@ -314,7 +312,7 @@ function do_exercise(sleepTime, loopNum, exercise_id, cookie) {
 
         let submitPost = http.request(submitAnswerUrl, {
           method: "POST",
-          headers: headers1,
+          headers: headers.B,
           contentType: "application/x-www-form-urlencoded; charset=UTF-8",
           body: "paper_id=" + paperId + "&id=" + id + answer + "&__token__=" + first_question_token,
         });
@@ -329,7 +327,7 @@ function do_exercise(sleepTime, loopNum, exercise_id, cookie) {
       } else {
         let submitPost = http.request(submitAnswerUrl, {
           method: "POST",
-          headers: headers1,
+          headers: headers.B,
           contentType: "application/x-www-form-urlencoded; charset=UTF-8",
           body: "paper_id=" + paperId + "&id=" + id + answer + "&__token__=" + nextToken,
         });
@@ -357,7 +355,7 @@ function do_exercise(sleepTime, loopNum, exercise_id, cookie) {
     let finishUrl = "http://nzks.2009xc.com/mobile/qbank.exercise.execution/submit?i=1";
     let finishPost = http.request(finishUrl, {
       method: "POST",
-      headers: headers1,
+      headers: headers.B,
       contentType: "application/x-www-form-urlencoded; charset=UTF-8",
       body: "paper_id=" + paperId + "&__token__=" + lastToken,
     });
@@ -365,6 +363,8 @@ function do_exercise(sleepTime, loopNum, exercise_id, cookie) {
     let res = finishPost.body.json();
     if (res.code == 0) {
       console.log(res.msg + "\n");
+      getUserInfo();
+      ui.answeredNum.setText("已答卷次数：" + (count - loopNum + 1));
     }
     // 等待10秒开始下一套练习
     sleep(2000);
