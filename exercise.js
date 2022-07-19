@@ -33,11 +33,9 @@ var exercise_id = 7;
 // 暂停等待时间
 // 生成随机暂停时间1-2秒之间的随机数
 var sleepTime = (Math.random() * 1 + 1) * 1000;
-// 置换cookie
 
 // 循环次数
 var loopNum = 4;
-
 
 
 /* 做练习 exercise */

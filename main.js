@@ -34,54 +34,57 @@ ui.layout(
     <viewpager margin="30">
       <vertical id="parent">
         <vertical>
-          <text id="name" text="姓名：{{name}}" textSize="14sp" h="40dp" textColor="blue" />
-          <text id="integral" text="当前积分：{{currentIntegral}}" textSize="14sp" h="40dp" textColor="red" />
-          <text text="Cookie" textColor="black" textStyle="bold" h="40dp" textSize="18sp" />
-          <input id="Cookie" text="" />
+          <text id="name" text="姓名：{{name}}" textSize="16sp" h="25dp" textColor="blue" />
+          <text id="integral" text="当前积分：{{currentIntegral}}" textSize="16sp" h="25dp" textColor="red" />
+          <text text="Cookie" textColor="black" textStyle="bold" h="30dp" textSize="18sp" />
+          <input maxHeight="300" id="Cookie" text="" textSize="18sp" />
         </vertical>
-        <spinner id="spinner" entries="{{dataList}}" textColor="red" />
+        <spinner id="spinner" entries="{{dataList}}" bg="#e2e2e2" textColor="red" h="35" />
+
         <horizontal>
           <text text="请输入答题延时" inputType="number" textColor="black" paddingLeft="8dp" textSize="14sp">
             请输入答题延时
           </text>
-          <input id="delay" w="120dp" text="{{sleepTime}}" />
+          <input id="delay" w="100dp" gravity="center_horizontal" text="{{sleepTime}}" />
         </horizontal>
         <horizontal>
           <text inputType="number" textColor="black" paddingLeft="8dp" textSize="14sp">
             （执行 | 轮询）次数
           </text>
-          <input id="loop" text="{{loopNum}}" w="120dp" />
+          <input id="loop" text="{{loopNum}}" w="90dp" gravity="center_horizontal" />
         </horizontal>
         <horizontal>
           <vertical>
-            <button w="120" id="start_btn" marginTop="18dp" bg="#27c671">
+            <button w="80" h="40" id="start_btn" marginTop="18dp" bg="#27c671">
               开始答题
             </button>
-            <button w="120" marginTop="18dp" bg="#f38b00">
+            <button w="80" h="40" marginTop="18dp" bg="#f38b00">
               开始考试
             </button>
           </vertical>
           <vertical>
-            <button w="120" marginTop="18dp" bg="#6574eb">
+            <button w="80" h="40" marginTop="18dp" bg="#6574eb">
               爬取题目
             </button>
-            <button id="stop" w="120" marginTop="18dp" bg="#e83434">
+            <button id="stop" w="80" h="40" marginTop="18dp" bg="#e83434">
               停止
             </button>
           </vertical>
-          <button w="*" h="*" marginTop="18dp" bg="#00acf6">
-            查询考试成绩
-          </button>
+          <vertical h="98" marginTop="18dp" marginLeft="60">
+            <button w="*" h="40" bg="#00acf6">
+              查询考试成绩
+            </button>
+            <text
+              id="answeredNum"
+              text="已答卷次数：{{ answeredNum }}"
+              gravity="center_vertical"
+              textSize="14sp"
+              h="58"
+              textColor="black"
+            ></text>
+          </vertical>
         </horizontal>
 
-        <text
-          id="answeredNum"
-          text="已答卷次数：{{ answeredNum }}"
-          gravity="center_vertical"
-          textSize="14sp"
-          h="40dp"
-          textColor="black"
-        ></text>
         <vertical h="auto">
           <text text="日志" gravity="center_vertical" textStyle="bold" textSize="16sp" textColor="black" />
           <com.stardust.autojs.core.console.ConsoleView marginTop="5" id="console" h="auto" />
@@ -390,6 +393,7 @@ function do_exercise(sleepTime, loopNum, exercise_id, cookie) {
   }
 }
 
+// 生成一个随机数 在1-5秒之间，90%的概率在2-3秒。
 function getRandomAnsTm(sleepTime, min) {
   return (Math.random() * sleepTime + min).toFixed(2);
 }
