@@ -37,7 +37,7 @@ ui.layout(
           <text id="name" text="姓名：{{name}}" textSize="14sp" h="40dp" textColor="blue" />
           <text id="integral" text="当前积分：{{currentIntegral}}" textSize="14sp" h="40dp" textColor="red" />
           <text text="Cookie" textColor="black" textStyle="bold" h="40dp" textSize="18sp" />
-          <input id="Cookie" />
+          <input id="Cookie" text="" />
         </vertical>
         <spinner id="spinner" entries="{{dataList}}" textColor="red" />
         <horizontal>
@@ -95,14 +95,10 @@ main();
 
 // 主函数
 function main() {
+  var cookie;
   // 两个线程
   var doExerciseThread;
   var getUserInfoThread;
-
-  getUserInfoThread = threads.start(function () {
-    //在新线程执行的代码
-    getUserInfo();
-  });
 
   // 设置控制台
   ui.console.setConsole(runtime.console);
@@ -130,35 +126,53 @@ function main() {
 
   // 开始答题按钮
   ui.start_btn.on("click", () => {
+    // 设置cookie
+    cookie = ui.Cookie.getText();
+    if (cookie == "") {
+      log("请输入cookie之后再开始答题");
+      alert("请输入cookie之后再开始答题");
+      return;
+    }
+
+    headers.A.cookie = cookie;
+    headers.B.cookie = cookie;
+    log("该用户的cookie是" + cookie + "\n");
+
     // 设置答题延时
     log("答题延时是" + ui.delay.getText());
     sleepTime = ui.delay.getText();
     // 设置答题次数
     log("执行次数是" + ui.loop.getText());
     loopNum = ui.loop.getText();
-    // 设置cookie
-    cookie = ui.Cookie.getText();
-    headers.A.cookie = cookie;
-    headers.B.cookie = cookie;
-    log("该用户的cookie是" + cookie + "\n");
 
-    doExerciseThread = threads.start(function () {
+    Thread = threads.start(function () {
       //在新线程执行的代码
+      // 获取用户信息
+      let userInfo = getUserInfo(cookie);
+      log("用户的名字为：" + userInfo.name);
+      log("当前积分为：" + userInfo.currentIntegral);
+
+      // 答题前积分
+      let forwardIntegral = userInfo.currentIntegral;
+      // 做练习
       do_exercise(sleepTime, loopNum, exercise_id, cookie);
-      // toast("执行任务完成！");
-      alert("执行任务完成！");
+      // 答题后积分
+      let afterIntegral = currentIntegral;
+      let diff = afterIntegral - forwardIntegral;
+
+      alert("执行任务完成！本次获得" + diff + "积分");
     });
   });
 
   // 停止答题按钮
   ui.stop.on("click", () => {
-    doExerciseThread.interrupt();
+    Thread.interrupt();
     log("已停止答题...");
   });
 }
 
 // 获取用户信息
-function getUserInfo() {
+function getUserInfo(cookie) {
   let url = "http://nzks.2009xc.com/mobile/system.member.Index?i=1";
   var getHtml = http.get(url, {
     headers: {
@@ -170,8 +184,7 @@ function getUserInfo() {
         " Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x6307001d)",
       // "X-Requested-With": "XMLHttpRequest",
       "Upgrade-Insecure-Requests": 1,
-      Cookie:
-        "PHPSESSID=cd70b21459a02bf2524bbb8e741eb7b1; __51cke__=; __tins__21354221=%7B%22sid%22%3A%201658202175397%2C%20%22vd%22%3A%201%2C%20%22expires%22%3A%201658203975397%7D; __51laig__=10",
+      Cookie: cookie,
     },
   });
   // 取得html内容
@@ -198,11 +211,10 @@ function getUserInfo() {
     }
   });
 
-  log("用户的名字为：" + name);
-  log("当前积分为：" + currentIntegral);
-
   ui.integral.setText("当前积分：" + currentIntegral);
   ui.name.setText("姓名：" + name);
+
+  return { name, currentIntegral };
 }
 
 // 做试卷函数
@@ -307,9 +319,11 @@ function do_exercise(sleepTime, loopNum, exercise_id, cookie) {
 
       // 开始循环答题
       if (i == 0) {
-        // 随机时间
+        // 每一题的答题延迟都不一样
         // sleepTime = (Math.random() * 1 + 1) * 1000;
+        sleepTime = getRandomAnsTm(sleepTime, 1000);
 
+        log(sleepTime);
         let submitPost = http.request(submitAnswerUrl, {
           method: "POST",
           headers: headers.B,
@@ -325,6 +339,8 @@ function do_exercise(sleepTime, loopNum, exercise_id, cookie) {
         // 暂停延迟
         sleep(sleepTime);
       } else {
+        sleepTime = getRandomAnsTm(sleepTime, 1000);
+        log(sleepTime);
         let submitPost = http.request(submitAnswerUrl, {
           method: "POST",
           headers: headers.B,
@@ -363,8 +379,8 @@ function do_exercise(sleepTime, loopNum, exercise_id, cookie) {
     let res = finishPost.body.json();
     if (res.code == 0) {
       console.log(res.msg + "\n");
-      getUserInfo();
-      ui.answeredNum.setText("已答卷次数：" + (count - loopNum + 1));
+      getUserInfo(cookie);
+      ui.answeredNum.setText("已答卷次数：" + (count - loopNum + 1) + "/" + count);
     }
     // 等待10秒开始下一套练习
     sleep(2000);
@@ -372,4 +388,8 @@ function do_exercise(sleepTime, loopNum, exercise_id, cookie) {
     /* 8. 下一次循环 */
     loopNum--;
   }
+}
+
+function getRandomAnsTm(sleepTime, min) {
+  return (Math.random() * sleepTime + min).toFixed(2);
 }
