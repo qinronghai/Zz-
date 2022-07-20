@@ -130,8 +130,7 @@ function main() {
       } else {
         log("选择的试卷是: " + dataList_copy_2[id]);
         // 设置试卷id
-        exercise_id = dataList_copy[id]; // TODO 完善id对应试卷名称
-        log("试卷id" + exercise_id);
+        exercise_id = dataList_copy[id];
       }
     },
   });
@@ -169,6 +168,7 @@ function main() {
 
       // 答题前积分
       let forwardIntegral = userInfo.currentIntegral;
+
       if (exercise_id == 8) {
         // 轮询7套试卷循环
         ui.answeredNum.setText("已答卷次数：0");
@@ -190,6 +190,7 @@ function main() {
   ui.stop.on("click", () => {
     Thread.interrupt();
     log("已停止答题...");
+    alert("已停止答题...");
   });
 }
 
@@ -249,7 +250,7 @@ function do_match_exercise(sleepTime, loopNum, exercise_id, cookie) {
     doExercise(sleepTime, exercise_id, cookie);
 
     ui.answeredNum.setText("已答卷次数：" + (count - loopNum + 1) + "/" + count);
-    // 等待开始下一答题
+    // 等待开始下一次答卷
     sleep(2000);
 
     // 下一次循环
