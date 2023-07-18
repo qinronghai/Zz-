@@ -1,0 +1,49 @@
+{
+  "assets": [],
+  "build": {
+    "build_id": "C055FA73-2",
+    "build_number": 2,
+    "build_time": 1689512249361,
+    "release": false
+  },
+  "encryptLevel": 0,
+  "features": {
+    "activityIntentTasks": false,
+    "nodejs": "auto"
+  },
+  "icon": "images/ic_app_logo.png",
+  "launchConfig": {
+    "displaySplash": true,
+    "hideLogs": false,
+    "splashText": "Powered by Auto.js Pro",
+    "stableMode": false
+  },
+  "main": "main.js",
+  "name": "zz得分小助手3",
+  "optimization": {
+    "obfuscateComponents": true,
+    "removeAccessibilityService": false,
+    "removeOpenCv": true,
+    "unusedResources": false
+  },
+  "packageName": "zz.test",
+  "permissionConfig": {
+    "manifestPermissions": [
+      "android.permission.INTERNET",
+      "android.permission.WRITE_EXTERNAL_STORAGE",
+      "android.permission.WAKE_LOCK"
+    ],
+    "requestListOnStartup": [
+      "android.permission.WRITE_EXTERNAL_STORAGE"
+    ]
+  },
+  "scripts": {},
+  "signingConfig": {
+    "alias": "",
+    "keystore": "",
+    "uuid": ""
+  },
+  "useFeatures": [],
+  "versionCode": 0,
+  "versionName": "1.0.0"
+}
